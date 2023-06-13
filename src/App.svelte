@@ -8,6 +8,8 @@
         SysExParameter,
     } from "./lib/sysex_proto.js";
 
+    import FloatInput from "./lib/FloatInput.svelte";
+
     // clear the console on each reload
     console.clear();
 
@@ -36,8 +38,10 @@
             version_string = reply.value_to_string();
         } else if (reply.is(SysExCommand.Get, SysExParameter.Ch1MaxVoltage)) {
             ch1_max_voltage = reply.value_to_float();
+            console.log("ch1_max_voltage", ch1_max_voltage);
         } else if (reply.is(SysExCommand.Get, SysExParameter.Ch2MaxVoltage)) {
             ch2_max_voltage = reply.value_to_float();
+            console.log("ch2_max_voltage", ch2_max_voltage);
         }
     };
 
@@ -108,14 +112,31 @@
         }
     };
 
-    let ch1_max_voltage_change = (e) => {
+    let send_ch1_max_voltage_change = (value) => {
         if (output) {
             sysex_protocol.send_float(
                 output,
                 SysExCommand.Set,
                 SysExParameter.Ch1MaxVoltage,
-                e.target.value
+                value.detail
             );
+        }
+    };
+
+    let send_ch2_max_voltage_change = (value) => {
+        if (output) {
+            sysex_protocol.send_float(
+                output,
+                SysExCommand.Set,
+                SysExParameter.Ch2MaxVoltage,
+                value.detail
+            );
+        }
+    };
+
+    let send_save = () => {
+        if (output) {
+            sysex_protocol.send(output, SysExCommand.Save, SysExParameter.None);
         }
     };
 </script>
@@ -124,13 +145,21 @@
     <h1>WebMidi</h1>
     <div>Ver: {version_string.replaceAll("|", " ")}</div>
     <div>
-        Ch1 max voltage: <input
-            type="number"
+        Ch1 max voltage:
+        <FloatInput
             value={ch1_max_voltage}
-            on:change={ch1_max_voltage_change}
+            on:change={send_ch1_max_voltage_change}
+            positions={4}
         />
     </div>
-    <div>Ch2 max voltage: <input type="number" value={ch2_max_voltage} /></div>
+    <div>
+        Ch2 max voltage:
+        <FloatInput
+            value={ch2_max_voltage}
+            on:change={send_ch2_max_voltage_change}
+            positions={4}
+        />
+    </div>
     <div>
         {#each notes_array as note}
             <button
@@ -140,6 +169,9 @@
                 {note}
             </button>
         {/each}
+    </div>
+    <div>
+        <button on:click={send_save}>Save</button>
     </div>
 </main>
 

@@ -26,9 +26,9 @@ let log = (dir: string, command: SysExCommand, parameter: SysExParameter, value:
     }
 
     if (value.length === 0) {
-        console.log(`${dir} ${SysExCommand[command]}, parameter: ${SysExParameter[parameter]}`);
+        console.log(`${dir} ${SysExCommand[command]}: ${SysExParameter[parameter]}`);
     } else {
-        console.log(`${dir} ${SysExCommand[command]}, parameter: ${SysExParameter[parameter]}, value: ${hexes}`);
+        console.log(`${dir} ${SysExCommand[command]}: ${SysExParameter[parameter]}, [${hexes}]`);
     }
 };
 
@@ -69,6 +69,9 @@ export class SysExProtocol {
     };
 
     send = (out: Output, command: SysExCommand, parameter: SysExParameter, value: number[] = []) => {
+        let uint8_value = new Uint8Array(value);
+        log('->', command, parameter, uint8_value);
+
         let data = new Uint8Array(4 + value.length * 2);
         data[0] = command >> 8;
         data[1] = command & 0xff;
@@ -79,8 +82,6 @@ export class SysExProtocol {
             data[4 + i * 2 + 1] = value[i] >> 4;
             data[4 + i * 2 + 0] = value[i] & 0x0f;
         }
-
-        log('->', command, parameter, data);
 
         // convert to number array
         let out_data = new Array<number>();
