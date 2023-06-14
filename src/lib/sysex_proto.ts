@@ -1,6 +1,6 @@
 import type { Output } from "webmidi";
 
-export const DEVICE_NAME = "STM32 USB Midi Port 1";
+export const DEVICE_NAME = "STM32 USB Midi";
 const manufacturer_id = [0x00, 0x21, 0x73];
 
 export enum SysExCommand {

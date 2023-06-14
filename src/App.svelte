@@ -54,7 +54,7 @@
             let output_device = WebMidi.getOutputByName(DEVICE_NAME);
             if (output_device) {
                 output = output_device;
-                console.log("Сonnected output:", output.name);
+                console.log("Connected output:", output.name);
                 sysex_protocol.send(
                     output,
                     SysExCommand.Get,
@@ -73,6 +73,8 @@
             } else if (output != null) {
                 console.log("Disonnected output:", output.name);
                 output = null;
+            } else {
+                console.log("Cannot find output device");
             }
 
             let input_device = WebMidi.getInputByName(DEVICE_NAME);
@@ -83,6 +85,8 @@
             } else if (input != null) {
                 console.log("Disonnected input:", input.name);
                 input = null;
+            } else {
+                console.log("Cannot find output device");
             }
         };
 
